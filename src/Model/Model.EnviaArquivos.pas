@@ -75,7 +75,7 @@ begin
                    TBlobField(cds.FieldByName('Arquivo')).LoadFromFile(FPath);
                    cds.Post;
 
-                 {$REGION SimulaÁ„o de erro, n„o alterar}
+                 {$REGION Simula√ß√£o de erro, n√£o alterar}
                         if i = (QTD_ARQUIVOS_ENVIAR / 2) then
                           FServidor.SalvarArquivos(NULL);
                  {$ENDREGION}
@@ -86,7 +86,9 @@ begin
                     cds := InitDataset;
                  end;
               except
+                fClienteServidor.ProgressBar.Position := 0
                 DeleteFiles;
+                Abort;
               end;
 
              fClienteServidor.ProgressBar.Position := i;
@@ -109,7 +111,7 @@ begin
           TBlobField(cds.FieldByName('Arquivo')).LoadFromFile(FPath);
           cds.Post;
 
-          {$REGION SimulaÁ„o de erro, n„o alterar}
+          {$REGION Simula√ß√£o de erro, n√£o alterar}
           if i = (QTD_ARQUIVOS_ENVIAR / 2) then
                 FServidor.SalvarArquivos(NULL);
           {$ENDREGION}
