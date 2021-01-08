@@ -23,6 +23,7 @@ type
     procedure EnviarSemErros;
     procedure EnviarComErros;
     procedure EnviarParalelo;
+    procedure DeleteFiles;
 
   end;
 
@@ -68,21 +69,24 @@ begin
         begin
            for i := 1 to  QTD_ARQUIVOS_ENVIAR do
            begin
-
               try
-                cds.Append;
-                TBlobField(cds.FieldByName('Arquivo')).LoadFromFile(FPath);
-                cds.Post;
+                 try
+                   cds.Append;
+                   TBlobField(cds.FieldByName('Arquivo')).LoadFromFile(FPath);
+                   cds.Post;
 
-              {$REGION Simulação de erro, não alterar}
-                    if i = (QTD_ARQUIVOS_ENVIAR / 2) then
-                      FServidor.SalvarArquivos(NULL);
-              {$ENDREGION}
+                 {$REGION Simulação de erro, não alterar}
+                        if i = (QTD_ARQUIVOS_ENVIAR / 2) then
+                          FServidor.SalvarArquivos(NULL);
+                 {$ENDREGION}
 
-              finally
-                FServidor.SalvarArquivosFracionados(cds.Data,i);
-                cds.Free;
-                cds := InitDataset;
+                 finally
+                    FServidor.SalvarArquivosFracionados(cds.Data,i);
+                    cds.Free;
+                    cds := InitDataset;
+                 end;
+              except
+                DeleteFiles;
               end;
 
              fClienteServidor.ProgressBar.Position := i;
@@ -302,6 +306,19 @@ end;
 procedure TEnviaArquivosServidor.SetTipoEnvio(const Value: integer);
 begin
   FTipoEnvio := Value;
+end;
+
+procedure TEnviaArquivosServidor.DeleteFiles;
+var
+i: integer;
+sr: TSearchRec;
+begin
+I := FindFirst('Servidor\*.*', faAnyFile, SR);
+while I = 0 do
+begin
+  DeleteFile('Servidor\' + SR.Name);
+  I := FindNext(SR);
+end;
 end;
 
 procedure TEnviaArquivosServidor.EnviaArquivos;
