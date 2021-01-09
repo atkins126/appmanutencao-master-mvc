@@ -12,7 +12,6 @@ type
     FPath: WideString;
 
     procedure EnviarArquivo; virtual; abstract;
-    function GetTipoEnvio: integer;
     function InitDataset: TClientDataset;
   public
     constructor Create;
@@ -54,11 +53,6 @@ begin
     'pdf.pdf';
 end;
 
-function TEnviaArquivosServidor.GetTipoEnvio: integer;
-begin
-  Result := FTipoEnvio;
-end;
-
 function TEnviaArquivosServidor.InitDataset: TClientDataset;
 begin
   Result := TClientDataset.Create(nil);
@@ -71,7 +65,7 @@ var
   i: integer;
   sr: TSearchRec;
 begin
- {Deleta os arquivos caso caia em except}
+  { Deleta os arquivos caso caia em except }
 
   i := FindFirst('Servidor\*.*', faAnyFile, sr);
   while i = 0 do
@@ -191,13 +185,13 @@ var
   FileEntrada: TFileStream;
 
 begin
-  FServidor   := TServidor.Create;
+  FServidor := TServidor.Create;
   FileEntrada := TFileStream.Create(FPath, fmOpenRead and fmShareExclusive);
-  SizeFile    := FileEntrada.Size;
+  SizeFile := FileEntrada.Size;
   fClienteServidor.ProgressBar.Position := 0;
   fClienteServidor.ProgressBar.Max := QTD_ARQUIVOS_ENVIAR;
 
- {Libera pra não ficar na memória e para liberar o arquivo}
+  { Libera pra não ficar na memória e para liberar o arquivo }
   FileEntrada.Free;
 
   cds := InitDataset;
