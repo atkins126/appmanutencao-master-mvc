@@ -86,7 +86,7 @@ begin
                     cds := InitDataset;
                  end;
               except
-                fClienteServidor.ProgressBar.Position := 0
+                fClienteServidor.ProgressBar.Position := 0;
                 DeleteFiles;
                 Abort;
               end;
