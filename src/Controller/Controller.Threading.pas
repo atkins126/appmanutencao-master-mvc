@@ -24,7 +24,7 @@ procedure TThreadObject.Execute;
 var
   I: Integer;
 begin
-  fThreads.Memo1.Lines.Add(ThreadID.ToString +' - Iniciando processamento');
+   fThreads.Memo1.Lines.Add(ThreadID.ToString +' - Iniciando processamento');
 
  for I := 0 to 100 do
   begin

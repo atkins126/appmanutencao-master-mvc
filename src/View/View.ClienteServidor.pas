@@ -42,9 +42,6 @@ type
 var
   fClienteServidor: TfClienteServidor;
 
-const
-  QTD_ARQUIVOS_ENVIAR = 100;
-
 implementation
 
 uses
@@ -54,12 +51,11 @@ uses
 
 procedure TfClienteServidor.btEnviarComErrosClick(Sender: TObject);
 var
- EnviarComErros : TEnviaArquivosServidor;
+ EnviarComErros : TEnviarComErros;
 begin
-  EnviarComErros := TEnviaArquivosServidor.Create;
+  EnviarComErros := TEnviarComErros.Create;
   try
-    EnviarComErros.TipoEnvio := 2;
-    EnviarComErros.EnviaArquivos;
+    EnviarComErros.EnviarArquivo;
   finally
     EnviarComErros.Free;
   end;
@@ -67,12 +63,11 @@ end;
 
 procedure TfClienteServidor.btEnviarParaleloClick(Sender: TObject);
 var
- EnviarParalelo : TEnviaArquivosServidor;
+ EnviarParalelo : TEnviarParalelo;
 begin
-  EnviarParalelo := TEnviaArquivosServidor.Create;
+  EnviarParalelo := TEnviarParalelo.Create;
   try
-    EnviarParalelo.TipoEnvio := 3;
-    EnviarParalelo.EnviaArquivos;
+    EnviarParalelo.EnviarArquivo;
   finally
    EnviarParalelo.Free;
   end;
@@ -80,14 +75,12 @@ end;
 
 procedure TfClienteServidor.btEnviarSemErrosClick(Sender: TObject);
 var
- EnviarSemErros : TEnviaArquivosServidor;
+ EnviarSemErros : TEnviarSemErros;
 begin
-  EnviarSemErros := TEnviaArquivosServidor.Create;
+  EnviarSemErros := TEnviarSemErros.Create;
   try
-    EnviarSemErros.TipoEnvio := 1;
-    EnviarSemErros.EnviaArquivos;
+    EnviarSemErros.EnviarArquivo;
   finally
-   ProgressBar.Position := 0;
    EnviarSemErros.Free;
   end;
 end;
