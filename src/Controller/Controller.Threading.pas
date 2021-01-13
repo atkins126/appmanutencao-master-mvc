@@ -10,34 +10,32 @@ type
   private
     FTimeWaiting: integer;
     procedure SetTimeWaiting(const Value: integer);
+
     { Private declarations }
   public
-    property TimeWaiting : integer read FTimeWaiting write SetTimeWaiting;
+    property TimeWaiting: integer read FTimeWaiting write SetTimeWaiting;
     procedure Execute; override;
   end;
 
 implementation
 
-uses View.Threads;
+uses View.Threads, Vcl.Forms;
 
 procedure TThreadObject.Execute;
 var
-  I: Integer;
+  I: integer;
+  aTask: iTask;
 begin
-   fThreads.Memo1.Lines.Add(ThreadID.ToString +' - Iniciando processamento');
-
- for I := 0 to 100 do
-  begin
-    TTask.Run(procedure
+  fThreads.Memo1.Lines.Add(ThreadID.ToString + ' - Iniciando processamento');
+  TParallel.for(0, 100,
+    procedure(I: integer)
     begin
-     sleep(Random(TimeWaiting));
+      sleep(Random(TimeWaiting));
+      fThreads.ProgressBar1.Position := I;
+      Synchronize(Application.ProcessMessages);
     end);
-
-   fThreads.ProgressBar1.Position := I;
-  end;
-
- fThreads.Memo1.Lines.Add(ThreadID.ToString + ' - Processamento Finalizado');
- fThreads.Memo1.Lines.Add(' ');
+  fThreads.Memo1.Lines.Add(ThreadID.ToString + ' - Processamento Finalizado');
+  fThreads.Memo1.Lines.Add(' ');
 end;
 
 procedure TThreadObject.SetTimeWaiting(const Value: integer);

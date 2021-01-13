@@ -83,6 +83,7 @@ var
   SizeFile: integer;
   FServidor: TServidor;
   FileEntrada: TFileStream;
+  aTask : iTask;
 begin
   FServidor := TServidor.Create;
   FileEntrada := TFileStream.Create(FPath, fmOpenRead and fmShareExclusive);
@@ -99,34 +100,31 @@ begin
       if MessageDlg('Arquivo muito grande, deseja realmente enviar?',
         mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes then
       begin
-        TTask.Run(
+        aTask := TTask.Create(
           procedure
           begin
-            TThread.Synchronize(TThread.CurrentThread,
-              procedure
+            TParallel.For(1, QTD_ARQUIVOS_ENVIAR,
+              procedure(i: integer)
               begin
-                TParallel.For(1, QTD_ARQUIVOS_ENVIAR,
-                  procedure(i: integer)
-                  begin
-                    try
-                      cds := InitDataset;
-                      cds.Append;
-                      TBlobField(cds.FieldByName('Arquivo'))
-                        .LoadFromFile(FPath);
-                      cds.Post;
+                try
+                  cds := InitDataset;
+                  cds.Append;
+                  TBlobField(cds.FieldByName('Arquivo'))
+                    .LoadFromFile(FPath);
+                  cds.Post;
 
-                    finally
-                      cds.Free;
-                      cds := InitDataset;
-                      FServidor.SalvarArquivosFracionados(cds.Data, i);
-                    end;
+                finally
+                  cds.Free;
+                  cds := InitDataset;
+//                  FServidor.SalvarArquivosFracionados(cds.Data, i);
+                end;
 
-                    fClienteServidor.ProgressBar.Position := i;
-                  end);
-                ShowMessage('Arquivos enviados com sucesso!');
+                fClienteServidor.ProgressBar.Position := i;
               end);
+            ShowMessage('Arquivos enviados com sucesso!');
 
           end);
+        aTask.Start;
         fClienteServidor.ProgressBar.Position := 0;
       end
       else

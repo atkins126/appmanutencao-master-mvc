@@ -3,10 +3,10 @@ unit View.Threads;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
-  System.Threading;
+  Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
+  System.Threading, Winapi.Windows,  Vcl.Forms;
+
 
 type
   TfThreads = class(TForm)
@@ -17,6 +17,7 @@ type
     btnProcessar: TButton;
     ProgressBar1: TProgressBar;
     Memo1: TMemo;
+    id_principal: TLabel;
     procedure StartProcess;
     procedure btnProcessarClick(Sender: TObject);
 
@@ -45,14 +46,14 @@ procedure TfThreads.btnProcessarClick(Sender: TObject);
 var
   aTask: iTask;
 begin
-  aTask := TTask.Create(
-  procedure
-   begin
-    Processed := False;
-    StartProcess;
-    ShowMessage('Processo concluído com sucesso!');
-   end);
-  aTask.Start;
+  aTask := TTask.Create(procedure
+  begin
+   Memo1.Clear;
+   Processed := False;
+   StartProcess;
+   ShowMessage('Processo concluído com sucesso!');
+  end);
+ aTask.Start;
 end;
 
 procedure TfThreads.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -74,9 +75,6 @@ var
   I: Integer;
   MyThread: TThreadObject;
 begin
-  fThreads.ProgressBar1.Position := 0;
-  fThreads.ProgressBar1.Max := 101;
-
   try
     for I := 1 to StrToInt(EdtqtdTrheads.Text) do
     begin
