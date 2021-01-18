@@ -47,7 +47,7 @@ object fClienteServidor: TfClienteServidor
     OnClick = btEnviarComErrosClick
   end
   object btEnviarParalelo: TButton
-    Left = 293
+    Left = 294
     Top = 19
     Width = 113
     Height = 25

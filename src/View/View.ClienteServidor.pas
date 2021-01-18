@@ -14,13 +14,14 @@ uses
 
 type
   TServidor = class
-  private
-    FPath: WideString;
   public
+    FPath: WideString;
+
     constructor Create;
     // Tipo do parâmetro não pode ser alterado
     function SalvarArquivos(AData: OleVariant): Boolean;
     function SalvarArquivosFracionados(AData: OleVariant; i:integer): Boolean;
+    function InitDataset: TClientDataset;
   end;
 
   TfClienteServidor = class(TForm)
@@ -67,10 +68,11 @@ var
 begin
   EnviarParalelo := TEnviarParalelo.Create;
   try
-    EnviarParalelo.EnviarArquivo;
+   EnviarParalelo.EnviarArquivo;
   finally
    EnviarParalelo.Free;
   end;
+
 end;
 
 procedure TfClienteServidor.btEnviarSemErrosClick(Sender: TObject);
@@ -81,7 +83,7 @@ begin
   try
     EnviarSemErros.EnviarArquivo;
   finally
-   EnviarSemErros.Free;
+    EnviarSemErros.Free;
   end;
 end;
 
@@ -105,6 +107,15 @@ begin
     CreateDir('Servidor');
 
   FPath := ExtractFilePath(ParamStr(0)) + 'Servidor\';
+  FPath := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) +
+    'pdf.pdf';
+end;
+
+function TServidor.InitDataset: TClientDataset;
+begin
+  Result := TClientDataset.Create(nil);
+  Result.FieldDefs.Add('Arquivo', ftBlob);
+  Result.CreateDataSet;
 end;
 
 function TServidor.SalvarArquivos(AData: OleVariant): Boolean;
@@ -127,7 +138,7 @@ begin
 
       while not cds.Eof do
       begin
-        FileName := FPath + cds.RecNo.ToString + '.pdf';
+        FileName := 'C:\Projetos\Delphi\SoftPlan\appmanutencao-master-mvc\src\Servidor\' + cds.RecNo.ToString + '.pdf';
 
         if TFile.Exists(FileName) then
           TFile.Delete(FileName);
@@ -165,7 +176,7 @@ begin
       if cds.RecordCount = 0 then
         Exit;
 {$ENDREGION}
-      FileName := FPath + i.ToString + '.pdf';
+      FileName := 'C:\Projetos\Delphi\SoftPlan\appmanutencao-master-mvc\src\Servidor\' + i.ToString + '.pdf';
 
       if TFile.Exists(FileName) then
         TFile.Delete(FileName);
@@ -173,7 +184,7 @@ begin
       TBlobField(cds.FieldByName('Arquivo')).SaveToFile(FileName);
 
       Result := True;
-    except
+    except on e:exception do
       raise;
     end;
 

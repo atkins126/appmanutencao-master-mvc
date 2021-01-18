@@ -4,9 +4,9 @@ interface
 
 uses
   Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls,
-  System.Threading, Winapi.Windows,  Vcl.Forms;
-
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Dialogs, Vcl.ComCtrls,
+  Vcl.StdCtrls,
+  System.Threading, Winapi.Windows, Vcl.Forms;
 
 type
   TfThreads = class(TForm)
@@ -17,7 +17,6 @@ type
     btnProcessar: TButton;
     ProgressBar1: TProgressBar;
     Memo1: TMemo;
-    id_principal: TLabel;
     procedure StartProcess;
     procedure btnProcessarClick(Sender: TObject);
 
@@ -43,22 +42,27 @@ implementation
 uses Controller.Threading;
 
 procedure TfThreads.btnProcessarClick(Sender: TObject);
-var
-  aTask: iTask;
 begin
-  aTask := TTask.Create(procedure
+  if EdtqtdTrheads.Text = '' then
   begin
-   Memo1.Clear;
-   Processed := False;
-   StartProcess;
-   ShowMessage('Processo concluído com sucesso!');
-  end);
- aTask.Start;
+    ShowMessage('Informe a quantidade de Tthreads a ser executada!');
+    exit;
+  end
+ else if edtTimer.Text = '' then
+  begin
+    ShowMessage('Informe o timer!');
+    exit;
+  end;
+
+  Memo1.Clear;
+  Processed := False;
+
+  StartProcess;
 end;
 
 procedure TfThreads.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- if not Processed then
+  if not Processed then
   begin
     ShowMessage('Espere até o término dos processos.');
     Abort;
@@ -67,30 +71,43 @@ end;
 
 procedure TfThreads.FormCreate(Sender: TObject);
 begin
- Processed := True;
+  Processed := True;
 end;
 
 procedure TfThreads.StartProcess;
 var
-  I: Integer;
   MyThread: TThreadObject;
+  aTask: itask;
 begin
-  try
-    for I := 1 to StrToInt(EdtqtdTrheads.Text) do
+ TThread.Synchronize(TThread.CurrentThread,
+  procedure
+  begin
+    aTask := TTask.Create(
+    procedure
+    var
+      I: Integer;
     begin
-      MyThread := TThreadObject.Create;
-      try
-        MyThread.TimeWaiting := StrToInt(edtTimer.Text);
-        MyThread.Execute;
-      finally
-        MyThread.Free;
+      for I := 1 to StrToInt(EdtqtdTrheads.Text) do
+      begin
+        MyThread := TThreadObject.Create;
+        try
+          Memo1.Lines.Add(MyThread.ThreadID.ToString +' - Iniciando processamento');
+          MyThread.TimeWaiting := StrToInt(edtTimer.Text);
+          MyThread.Execute;
+        finally
+          Memo1.Lines.Add(MyThread.ThreadID.ToString +' - Processamento Finalizado');
+          Memo1.Lines.Add(' ');
+          MyThread.Free;
+        end;
       end;
 
-    end;
-  finally
-   ProgressBar1.Position := 0;
-   Processed := True;
-  end;
+      ShowMessage('Processo concluído com sucesso!');
+      ProgressBar1.Position := 0;
+      Processed := True;
+
+    end);
+    aTask.Start;
+  end);
 
 end;
 

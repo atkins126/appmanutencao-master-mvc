@@ -1,9 +1,9 @@
 object fThreads: TfThreads
   Left = 0
   Top = 0
-  Caption = 'fThreads'
-  ClientHeight = 315
-  ClientWidth = 430
+  Caption = 'Threads'
+  ClientHeight = 267
+  ClientWidth = 313
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,43 +17,36 @@ object fThreads: TfThreads
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 94
-    Top = 29
+    Left = 62
+    Top = 37
     Width = 64
     Height = 13
     Caption = 'Qtd. Threads'
   end
   object Label2: TLabel
-    Left = 280
-    Top = 29
+    Left = 224
+    Top = 37
     Width = 26
     Height = 13
     Caption = 'Timer'
   end
-  object id_principal: TLabel
-    Left = 105
-    Top = 144
-    Width = 201
-    Height = 13
-    Caption = 'idthread'
-  end
   object EdtqtdTrheads: TEdit
-    Left = 80
-    Top = 48
-    Width = 95
+    Left = 62
+    Top = 56
+    Width = 57
     Height = 21
     TabOrder = 0
   end
   object edtTimer: TEdit
-    Left = 248
-    Top = 48
-    Width = 95
+    Left = 206
+    Top = 56
+    Width = 57
     Height = 21
     TabOrder = 1
   end
   object btnProcessar: TButton
-    Left = 167
-    Top = 75
+    Left = 125
+    Top = 83
     Width = 75
     Height = 25
     Caption = 'Processar'
@@ -63,23 +56,30 @@ object fThreads: TfThreads
   object ProgressBar1: TProgressBar
     AlignWithMargins = True
     Left = 3
-    Top = 288
-    Width = 424
-    Height = 17
+    Top = 233
+    Width = 307
+    Height = 24
     Margins.Bottom = 10
     Align = alBottom
     Max = 101
     TabOrder = 3
-    ExplicitTop = 210
+    ExplicitTop = 265
   end
   object Memo1: TMemo
     AlignWithMargins = True
     Left = 3
-    Top = 192
-    Width = 424
-    Height = 90
+    Top = 117
+    Width = 307
+    Height = 110
     Align = alBottom
+    Alignment = taCenter
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 4
-    ExplicitTop = 114
+    ExplicitTop = 115
   end
 end

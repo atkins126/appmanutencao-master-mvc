@@ -23,11 +23,17 @@ Dica: antes de iniciar as alterações, leia todo o README.
 
 `Implementação 1: implemente um gerenciador de exceções no projeto. A cada exceção gerada, independente do ponto da aplicação que ocorra, deve passar pelo gerenciador, e a classe e mensagem da exceção devem ser salvas em um arquivo de log. Depois de salva a mensagem no log, a exceção deve ser levantada normalmente. Fica a critério do candidato se quiser criar uma tela específica para mostrar a exceção, ou se quiser tratar algumas exceções. Isso é opcional.`
 
+ Criado uma nova unit conforme proposto, com todos os comportamentos assim solicitados. Quando a exceção ocorrer, irá gerar um arquivo de log dentro da pasta raiz do projeto, o arquivo irá conter o log da exceção, com a data exata em que ocorreu.
+
 `Implementação 2: na tela ClienteServidor, implemente o comportamento da barra de progresso para mostrar o progresso da operação de envio de arquivos.`
+Implementado a incrementação dentro do loop de envio de arquivos.
 
 `Implementação 3 (opcional): na tela ClienteServidor, implemente o comportamento do botão "Enviar paralelo". Esse botão deve fazer a mesma coisa que o botão "Enviar sem erros", porém de forma paralelizada, com objetivo de ganhar performance. Pense em uma solução que irá funcionar mesmo que a constante QTD_ARQUIVOS_ENVIAR tivesse valores mais altos, como mil ou dez mil`
+ Feito o uso do  Parallel.For, no intuito de realizar envios simultâneos, independente da quantidade de arquivos. O intuito também é de melhor performance.
 
 `Implementação 4: para demonstrar seu domínio em programação com Threads no Delphi, crie um formulário com o nome da unit “Threads.pas” e nome do form “fThreads”, adicione ao formulário 2 edits, um botão, uma barra de progresso e um memo (TMemo). O primeiro edit será utilizado para especificar o número de threads a serem criadas, o segundo edit para informar um valor de tempo em milissegundos máximo de espera entre cada iteração dos threads. Estes threads irão realizar um laço de 0 até 100, onde a cada iteração do laço elas deverão aguardar um tempo randômico em milissegundos, sendo o valor máximo determinado pelo usuário considerando o dado inserido no formulário. Ao iniciar o processamento um thread deve inserir no memo (TMemo) seu thread-id e o texto “Iniciando processamento" (Ex. 1543 – Iniciando processamento) e ao término do mesmo seu thread-id e o texto “Processamento finalizado" (Ex. 1543 – Processamento finalizado), os textos respectivos devem ser disparados dentro do thread em si. A cada iteração do laço, a thread deverá incrementar o valor do contador de iterações do loop na barra de progresso disponível no formulário. Todos os threads compartilharão a mesma barra de progresso, sendo então o valor mínimo da barra de progresso 0 e seu valor máximo o número de threads * vezes número de iterações (Em nosso exemplo de 0 a 100 ocorrem 101 iterações). Importante: Preocupe-se com o fechamento do formulário, o mesmo deve solicitar que as threads finalizem "gentilmente" ou esperar o término do processamento. Dica: utilize o procedimento Sleep(Milisegundos: Integer) para fazer a espera entre cada iteração do loop das threads e a função Random para garantir um valor aleatório de espera.`
+
+Criado como  proposto, feito uso das opções da library Threadding, usando algumas opções para sincronizar a barra com a thread principal.
 
 ## Correções
 
@@ -43,11 +49,11 @@ Solução:
 
 Solução:
   Primeiramente o erro acontece por que o arquivo de origem que está sendo carregado para o objeto é muito grande, por isso, é necessário que haja rotina de compressão do arquivo e depois converter em  Base64 antes de carregar no objeto, para assim salvar na pasta posteriormente.
-  Foi feita um experimento compactando o arquivo e convertendso pra base64 dentro do delphi, porém mesmo assim, o arquivo fica muito grande, além do arquivo ficar corrompido após a conversão. Por isso tomei outra medida, coloquei um question user, dando o opção para o usuário querer realmente enviar o arquivo para a pasta, e dai é feito o envio de 1 por vez para não ocorrer o estouro de memória. E também tem a rotina para salvar da outra forma, caso o arquivo não seja tão grande.
+  Foi feita um experimento compactando o arquivo e convertendso pra base64 dentro do delphi, porém mesmo assim, o arquivo fica muito grande, além do arquivo ficar corrompido após a conversão. Feito a rotina para enviar o arquivo de 1 por um, em segundo plano, com o uso da iTask, executando a rotina dentro de um loop com "For" tradicional.
   
    É necessário também que o objeto ClientDataset seja destruído após o término de sua utilização, para isso cria-se uma rotina de try finally, fazendo criação e destrução do objeto dentro desta rotina.
 
 `Defeito 3: na tela ClienteServidor, ao clicar no botão "Enviar com erros", os arquivos enviados anteriormente não são apagados da pasta Servidor. Objetivo: quando ocorrer erro na operação, que é o caso que esse botão simula, os arquivos copiados anteriormente devem ser apagados, simulando um "rollback". Ou seja, no fim da operação, os arquivos devem continuar na pasta apenas se não ocorreu erro na operação. obs: não é para ser corrigido o erro que ocorre ao clicar nesse botão, visto que ele serve justamente para simular um erro.`
 
-Solução:
-  Cria-se uma procedure que faça uma rotina de varredura da pasta, no caso "Servidor", e que esta rotina apague todos os arquivos que encontrar dentro  dela. A rotina feita será esecutada num bloco  de try e except, com a rotina de envios de arquivos que deverá ser realocada para dentro do do mesmo.
+Solução:s
+  Cria-se uma procedure que faça uma rotina de varredura da pasta, no caso "Servidor", e que esta rotina apague todos os arquivos que encontrar dentro  dela. A rotina feita será esecutada num bloco  de try e except quando cair na exceção. É necessário que haja um "abort" para que o ssitema não seja continuado e assim não contuie enviando o restante dos arquivos.

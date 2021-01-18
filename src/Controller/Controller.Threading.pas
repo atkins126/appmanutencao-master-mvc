@@ -19,23 +19,18 @@ type
 
 implementation
 
-uses View.Threads, Vcl.Forms;
+uses View.Threads, Vcl.Forms, System.SyncObjs;
 
 procedure TThreadObject.Execute;
 var
-  I: integer;
-  aTask: iTask;
+  i: Integer;
 begin
-  fThreads.Memo1.Lines.Add(ThreadID.ToString + ' - Iniciando processamento');
-  TParallel.for(0, 100,
-    procedure(I: integer)
-    begin
-      sleep(Random(TimeWaiting));
-      fThreads.ProgressBar1.Position := I;
-      Synchronize(Application.ProcessMessages);
-    end);
-  fThreads.Memo1.Lines.Add(ThreadID.ToString + ' - Processamento Finalizado');
-  fThreads.Memo1.Lines.Add(' ');
+  for i := 0 to 100 do
+  begin
+   sleep(Random(TimeWaiting));
+   fThreads.ProgressBar1.Position := i;
+   Application.ProcessMessages;
+  end;
 end;
 
 procedure TThreadObject.SetTimeWaiting(const Value: integer);
